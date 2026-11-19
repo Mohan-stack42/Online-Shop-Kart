@@ -1,0 +1,41 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="detail">
+  <div class="detail-left">
+    {% if p.image %}<img id="mainImg" src="{{ p.image.url }}">{% endif %}
+    <div class="thumbs">
+      {% if p.image %}<img src="{{ p.image.url }}" onclick="changeImg(this.src)">{% endif %}
+      {% for m in p.gallery.all %}
+        {% if not m.is_video %}<img src="{{ m.file.url }}" onclick="changeImg(this.src)">{% endif %}
+      {% endfor %}
+    </div>
+    {% if p.video %}
+    <h4>Product Video</h4>
+    <video width="100%" controls><source src="{{ p.video.url }}" type="video/mp4"></video>
+    {% endif %}
+    {% for m in p.gallery.all %}
+      {% if m.is_video %}<video width="100%" controls style="margin-top:10px;"><source src="{{ m.file.url }}" type="video/mp4"></video>{% endif %}
+    {% endfor %}
+  </div>
+  <div class="detail-right">
+    <h1>{{ p.product_name }}</h1>
+    <p>Category: {{ p.category.name }}</p>
+    <h2>₹{{ p.price }} {% if p.old_price %}<s>₹{{ p.old_price }}</s> <span class="off">{{ p.discount }}% off</span>{% endif %}</h2>
+    <p>{{ p.description }}</p>
+    <p>Stock: {{ p.stock }}</p>
+    <a href="{% url 'add_to_cart' p.id %}" class="btn">Add to Cart</a>
+    <a href="{% url 'cart_view' %}" class="btn btn2">Go to Cart</a>
+  </div>
+</div>
+<h3>You May Also Like</h3>
+<div class="grid">
+  {% for r in related %}
+  <div class="card">
+    <a href="{% url 'product_detail' r.id %}">{% if r.image %}<img src="{{ r.image.url }}">{% endif %}</a>
+    <h3>{{ r.product_name }}</h3>
+    <p class="price">₹{{ r.price }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
